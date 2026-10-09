@@ -1,5 +1,5 @@
 # Binaries
-sstk
+/sstk
 *.exe
 *.dll
 *.so
@@ -36,8 +36,8 @@ Thumbs.db
 # Temporary files
 *.tmp
 
-# Output directories
-output/
+# Output directories (root only, not pkg/output/)
+/output/
 
 # Test corpora (kept locally, not part of the repo)
 samples/
