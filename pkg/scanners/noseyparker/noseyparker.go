@@ -22,6 +22,13 @@ func (s *Scanner) IsInstalled() bool {
 	return err == nil
 }
 
+// DeprecationNotice marks noseyparker as deprecated; it is only run when
+// explicitly selected via --scanners. Titus (github.com/praetorian-inc/titus)
+// is its official replacement.
+func (s *Scanner) DeprecationNotice() string {
+	return "noseyparker is retired upstream; replaced by titus (github.com/praetorian-inc/titus)"
+}
+
 func (s *Scanner) Scan(target string) (*scanner.ScanResult, error) {
 	if !s.IsInstalled() {
 		return nil, fmt.Errorf("noseyparker is not installed")

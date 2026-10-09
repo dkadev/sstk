@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **titus** scanner as a core wrapper target (https://github.com/praetorian-inc/titus, official successor of noseyparker)
+
+### Changed
+
+- noseyparker is now marked deprecated: it is excluded from default scans and only runs when selected explicitly via `--scanners noseyparker`
+- `sstk list` shows a deprecation notice for deprecated scanners
+
 ## [0.1.0] - 2026-10-09
 
 ### Added

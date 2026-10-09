@@ -16,6 +16,17 @@ type Scanner interface {
 	IsInstalled() bool
 }
 
+// DeprecatedScanner is implemented by scanners that are kept for backwards
+// compatibility but are superseded by another tool. Deprecated scanners are
+// excluded from the default scan set and only run when selected explicitly
+// via the --scanners flag.
+type DeprecatedScanner interface {
+	Scanner
+
+	// DeprecationNotice returns a short explanation shown in `sstk list`
+	DeprecationNotice() string
+}
+
 // ScanResult represents the results from a scanner
 type ScanResult struct {
 	ScannerName string

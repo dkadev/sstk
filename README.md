@@ -4,7 +4,7 @@ A unified CLI tool that integrates multiple secret scanning tools into a single 
 
 ## Overview
 
-sstk wraps multiple popular secret scanning tools (gitleaks, trufflehog, noseyparker, detect-secrets) and provides:
+sstk wraps multiple popular secret scanning tools (gitleaks, trufflehog, titus, detect-secrets, and the deprecated noseyparker) and provides:
 - Unified command-line interface
 - Result aggregation across scanners
 - Automatic deduplication of findings
@@ -22,8 +22,9 @@ You must have at least one of the following scanners installed:
 
 - **gitleaks**: `brew install gitleaks` or see https://github.com/gitleaks/gitleaks
 - **trufflehog**: `brew install trufflehog` or see https://github.com/trufflesecurity/trufflehog
-- **noseyparker**: See https://github.com/praetorian-inc/noseyparker
+- **titus**: See https://github.com/praetorian-inc/titus (successor of noseyparker)
 - **detect-secrets**: `pip install detect-secrets` or see https://github.com/Yelp/detect-secrets
+- **noseyparker** (deprecated): https://github.com/praetorian-inc/noseyparker — retired upstream, replaced by titus; kept for backwards compatibility and only run when selected explicitly via `--scanners noseyparker`
 
 ### Install sstk
 
@@ -53,11 +54,15 @@ Output:
 ```
 Available Scanners:
 -------------------
-gitleaks             ✓ Installed
-trufflehog           ✗ Not Installed
-noseyparker          ✗ Not Installed
-detect-secrets       ✗ Not Installed
+gitleaks        installed
+trufflehog      installed
+titus           installed
+detect-secrets  NOT installed
+noseyparker     installed
+                deprecated: noseyparker is retired upstream; replaced by titus (github.com/praetorian-inc/titus)
 ```
+
+Deprecated scanners are excluded from default scans and only run when named explicitly in `--scanners`.
 
 ### Scan a Directory
 
@@ -126,6 +131,9 @@ Run specific scanners only:
 
 ```bash
 sstk scan /path/to/repo --scanners gitleaks,trufflehog
+
+# Deprecated scanners (e.g. noseyparker) only run when selected explicitly:
+sstk scan /path/to/repo --scanners noseyparker
 ```
 
 ### Deduplication Strategy

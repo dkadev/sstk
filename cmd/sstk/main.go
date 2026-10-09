@@ -15,6 +15,7 @@ import (
 	"github.com/dkadev/sstk/pkg/scanners/detectsecrets"
 	"github.com/dkadev/sstk/pkg/scanners/gitleaks"
 	"github.com/dkadev/sstk/pkg/scanners/noseyparker"
+	"github.com/dkadev/sstk/pkg/scanners/titus"
 	"github.com/dkadev/sstk/pkg/scanners/trufflehog"
 )
 
@@ -24,13 +25,15 @@ const (
 	defaultOutputFormat = "text"
 )
 
-// registry returns all supported scanners in stable order
+// registry returns all supported scanners in stable order.
+// Deprecated scanners are only run when selected explicitly via --scanners.
 func registry() []scanner.Scanner {
 	return []scanner.Scanner{
 		&gitleaks.Scanner{},
 		&trufflehog.Scanner{},
-		&noseyparker.Scanner{},
+		&titus.Scanner{},
 		&detectsecrets.Scanner{},
+		&noseyparker.Scanner{},
 	}
 }
 
@@ -51,7 +54,7 @@ func main() {
 			return runScan(args[0], scannersFlag, formatFlag, outputFlag, outputDirFlag, dedupeByFlag, allFormats, showSecrets)
 		},
 	}
-	scanCmd.Flags().StringVarP(&scannersFlag, "scanners", "s", "", "comma-separated list of scanners to use (default: all installed)")
+	scanCmd.Flags().StringVarP(&scannersFlag, "scanners", "s", "", "comma-separated list of scanners to use (default: all installed, excluding deprecated ones like noseyparker)")
 	scanCmd.Flags().StringVarP(&formatFlag, "format", "f", defaultOutputFormat, "output format (text, json or csv)")
 	scanCmd.Flags().StringVarP(&outputFlag, "output", "o", "", "output file for results (default: <output-dir>/<timestamp>/results.<format>)")
 	scanCmd.Flags().StringVar(&outputDirFlag, "output-dir", defaultOutputDir, "base directory for timestamped scan outputs")
@@ -203,6 +206,11 @@ func selectScanners(scannerNames string) ([]scanner.Scanner, error) {
 		}
 	} else {
 		for _, s := range all {
+			// Deprecated scanners are opt-in only: run them when named
+			// explicitly via --scanners, not as part of the default set
+			if isDeprecated(s) {
+				continue
+			}
 			if s.IsInstalled() {
 				selected = append(selected, s)
 			}
@@ -224,8 +232,25 @@ func runList() error {
 			status = "installed"
 		}
 		fmt.Printf("%-15s %s\n", s.Name(), status)
+		if notice := deprecationNotice(s); notice != "" {
+			fmt.Printf("%-15s deprecated: %s\n", "", notice)
+		}
 	}
 	return nil
+}
+
+// isDeprecated reports whether the scanner implements scanner.DeprecatedScanner
+func isDeprecated(s scanner.Scanner) bool {
+	_, ok := s.(scanner.DeprecatedScanner)
+	return ok
+}
+
+// deprecationNotice returns the scanner's deprecation notice, or ""
+func deprecationNotice(s scanner.Scanner) string {
+	if d, ok := s.(scanner.DeprecatedScanner); ok {
+		return d.DeprecationNotice()
+	}
+	return ""
 }
 
 // scannerNamesOf returns a comma-separated list of scanner names
