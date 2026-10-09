@@ -1,0 +1,43 @@
+# Binaries
+sstk
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test files
+test_repo/
+*.test
+*.json
+*.txt
+
+# Go build artifacts
+*.o
+*.a
+*.out
+
+# Dependency directories
+vendor/
+
+# AI assistant guidelines
+AGENTS.md
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+
+# Output directories
+output/
+
+# Test corpora (kept locally, not part of the repo)
+samples/
